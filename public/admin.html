@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>TIENDA ONLINE - Gestión</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+  <style>
+    :root {
+      --primary-color: #4A90E2;      /* Azul principal */
+      --secondary-color: #50E3C2;    /* Verde-azulado */
+      --accent-color: #F5A623;       /* Naranja */
+      --background-color: #1E1E1E;   /* Negro rico */
+      --card-color: #2D2D2D;         /* Gris oscuro */
+      --text-color: #E0E0E0;         /* Gris claro para texto principal */
+      --text-muted: #A0A0A0;         /* Gris medio para texto secundario */
+      --navbar-color: #2D2D2D;       /* Gris oscuro */
+      --hover-color: #5DA1E9;        /* Azul hover */
+    }
+
+    body {
+      padding-top: 76px;
+      background-color: var(--background-color);
+      color: var(--text-color);
+      font-family: 'Poppins', sans-serif;
+    }
+
+    .navbar {
+      position: fixed;
+      width: 100%;
+      top: 0;
+      z-index: 1030;
+      transition: transform 0.3s ease-in-out;
+      background: var(--navbar-color) !important;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    }
+
+    .navbar-dark .navbar-nav .nav-link {
+      color: white !important;
+      font-weight: 500;
+    }
+
+    .navbar-dark .navbar-nav .nav-link.active {
+      color: var(--accent-color) !important;
+    }
+
+    .hero-section {
+      background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+      color: white;
+      padding: 6rem 0;
+      margin-bottom: 4rem;
+      border-radius: 0 0 50px 50px;
+    }
+
+    .card {
+      transition: all 0.3s ease;
+      border: none;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+      background-color: var(--card-color);
+      border-radius: 15px;
+      overflow: hidden;
+      margin-bottom: 20px;
+      color: var(--text-color);
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    }
+
+    .card-title {
+      font-size: 1.25rem;
+      margin-bottom: 1rem;
+      color: var(--accent-color);
+    }
+
+    .card-text {
+      color: var(--text-muted);
+      opacity: 0.8;
+      line-height: 1.5;
+      margin-bottom: 1.5rem;
+    }
+
+    .btn-primary {
+      background-color: var(--primary-color);
+      border-color: var(--primary-color);
+      border-radius: 10px;
+      padding: 10px 20px;
+      font-weight: 500;
+    }
+
+    .btn-primary:hover {
+      background-color: var(--hover-color);
+      border-color: var(--hover-color);
+      transform: translateY(-2px);
+    }
+
+    .btn-light {
+      background-color: var(--card-color);
+      border-color: rgba(255,255,255,0.1);
+      color: var(--text-color);
+      border-radius: 10px;
+      padding: 10px 20px;
+      font-weight: 500;
+    }
+
+    .btn-light:hover {
+      background-color: var(--navbar-color);
+      border-color: rgba(255,255,255,0.2);
+      color: var(--text-color);
+    }
+
+    .table {
+      background-color: var(--card-color);
+      border-radius: 15px;
+      overflow: hidden;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+      color: var(--text-color);
+      border: 1px solid rgba(255,255,255,0.1);
+      margin-bottom: 2rem;
+    }
+
+    .table th {
+      background-color: var(--primary-color);
+      color: white;
+      border: none;
+      padding: 1rem;
+      font-weight: 500;
+    }
+
+    .table td {
+      vertical-align: middle;
+      color: var(--text-color);
+      border-color: rgba(255,255,255,0.1);
+      padding: 1rem;
+      line-height: 1.4;
+    }
+
+    .table tbody tr:hover {
+      background-color: rgba(255,255,255,0.05);
+    }
+
+    .modal-content {
+      background-color: var(--card-color);
+      border-radius: 15px;
+      color: var(--text-color);
+    }
+
+    .modal-header {
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      background-color: var(--primary-color);
+      color: white;
+    }
+
+    .modal-footer {
+      border-top: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .form-control {
+      background-color: var(--background-color);
+      border-color: rgba(255,255,255,0.1);
+      color: var(--text-color);
+      border-radius: 10px;
+      padding: 12px;
+    }
+
+    .form-control:focus {
+      background-color: var(--background-color);
+      border-color: var(--primary-color);
+      color: var(--text-color);
+      box-shadow: 0 0 0 0.2rem rgba(255, 107, 107, 0.25);
+    }
+
+    .form-label {
+      color: var(--text-color);
+    }
+
+    .dropdown-menu {
+      background-color: var(--card-color);
+      border-color: rgba(255,255,255,0.1);
+    }
+
+    .dropdown-item {
+      color: var(--text-color);
+    }
+
+    .dropdown-item:hover {
+      background-color: rgba(255,255,255,0.05);
+      color: var(--text-color);
+    }
+
+    .dropdown-divider {
+      border-color: rgba(255,255,255,0.1);
+    }
+
+    .dropdown-header {
+      color: var(--text-color);
+      opacity: 0.8;
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-dark">
+    <div class="container">
+      <a class="navbar-brand" href="/">
+        <i class="bi bi-shop me-2"></i>
+        Mi Tienda
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav me-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="/">
+              <i class="bi bi-grid me-1"></i>
+              Catálogo
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="ubicaciones.html">
+              <i class="bi bi-geo-alt me-1"></i>
+              Ubicaciones
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link active" href="admin.html">
+              <i class="bi bi-gear me-1"></i>
+              Gestión
+            </a>
+          </li>
+        </ul>
+        <div class="d-flex align-items-center">
+          <div id="menuUsuarioAuth" class="dropdown me-3">
+            <button class="btn btn-light dropdown-toggle" type="button" id="btnCuenta" data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="bi bi-person-check"></i>
+              <span id="nombreUsuarioBtn"></span>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end">
+              <li><h6 class="dropdown-header" id="nombreUsuario"></h6></li>
+              <li><hr class="dropdown-divider"></li>
+              <li>
+                <button class="dropdown-item" type="button" id="btnCerrarSesion">
+                  <i class="bi bi-box-arrow-right me-2"></i>
+                  Cerrar Sesión
+                </button>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <section class="hero-section">
+    <div class="container text-center">
+      <h1 class="display-4 mb-4">Panel de Gestión</h1>
+      <p class="lead">Administra los productos y usuarios de la tienda</p>
+    </div>
+  </section>
+
+  <div class="container">
+    <div class="row mb-4">
+      <div class="col-md-6">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">
+              <i class="bi bi-box-seam me-2"></i>
+              Gestión de Productos
+            </h5>
+            <p class="card-text">Administra el catálogo de productos de la tienda.</p>
+            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#productoModal">
+              <i class="bi bi-plus-circle me-2"></i>
+              Agregar Producto
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">
+              <i class="bi bi-people me-2"></i>
+              Gestión de Usuarios
+            </h5>
+            <p class="card-text">Administra los usuarios registrados en la tienda.</p>
+            <button class="btn btn-primary" onclick="mostrarUsuarios()">
+              <i class="bi bi-list me-2"></i>
+              Ver Usuarios
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="table-responsive">
+      <table class="table" id="tablaProductos">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Descripción</th>
+            <th>Precio</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Los productos se cargarán dinámicamente aquí -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Modal de Producto -->
+  <div class="modal fade" id="productoModal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">
+            <i class="bi bi-box-seam me-2"></i>
+            Agregar Producto
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <form id="productoForm">
+            <div class="mb-3">
+              <label for="nombre" class="form-label">Nombre</label>
+              <input type="text" class="form-control" id="nombre" required>
+            </div>
+            <div class="mb-3">
+              <label for="descripcion" class="form-label">Descripción</label>
+              <textarea class="form-control" id="descripcion" rows="3" required></textarea>
+            </div>
+            <div class="mb-3">
+              <label for="precio" class="form-label">Precio</label>
+              <input type="number" class="form-control" id="precio" step="0.01" required>
+            </div>
+            <div class="mb-3">
+              <label for="imagen" class="form-label">Imagen</label>
+              <input type="file" class="form-control" id="imagen" accept="image/*">
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
+          <button type="button" class="btn btn-primary" onclick="guardarProducto()">
+            <i class="bi bi-save me-2"></i>
+            Guardar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // Variables globales
+    const API_URL = '/api/productos';
+    const API_AUTH_URL = '/api/auth';
+    let usuarioActual = null;
+    let productos = [];
+
+    // Funciones de autenticación
+    const obtenerToken = () => {
+      return localStorage.getItem('token');
+    };
+
+    const actualizarUIAutenticacion = () => {
+      try {
+        const menuUsuarioAuth = document.getElementById('menuUsuarioAuth');
+        const nombreUsuario = document.getElementById('nombreUsuario');
+        const nombreUsuarioBtn = document.getElementById('nombreUsuarioBtn');
+
+        if (usuarioActual) {
+          menuUsuarioAuth.classList.remove('d-none');
+          nombreUsuario.textContent = usuarioActual.nombre;
+          nombreUsuarioBtn.textContent = usuarioActual.nombre;
+
+          // Verificar si es admin
+          if (usuarioActual.rol !== 'admin') {
+            window.location.href = '/';
+          }
+        } else {
+          window.location.href = '/';
+        }
+      } catch (error) {
+        console.error('Error al actualizar UI:', error);
+      }
+    };
+
+    const cerrarSesion = async () => {
+      try {
+        const token = obtenerToken();
+        if (token) {
+          await fetch(`${API_AUTH_URL}/logout`, {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${token}`
+            }
+          });
+        }
+        
+        localStorage.removeItem('token');
+        localStorage.removeItem('usuario');
+        usuarioActual = null;
+        
+        window.location.href = '/';
+      } catch (error) {
+        console.error('Error al cerrar sesión:', error);
+      }
+    };
+
+    // Función para cargar productos
+    const cargarProductos = async () => {
+      try {
+        const token = obtenerToken();
+        const response = await fetch(API_URL, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        if (!response.ok) throw new Error('Error al cargar productos');
+
+        productos = await response.json();
+        mostrarProductos();
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    };
+
+    // Función para mostrar productos en la tabla
+    const mostrarProductos = () => {
+      const tbody = document.querySelector('#tablaProductos tbody');
+      tbody.innerHTML = '';
+
+      productos.forEach(p => {
+        tbody.innerHTML += `
+          <tr>
+            <td>${p.id}</td>
+            <td>${p.nombre}</td>
+            <td>${p.descripcion}</td>
+            <td>${formatearPrecio(p.precio)}</td>
+            <td>
+              <button class="btn btn-sm btn-primary me-1" onclick="editarProducto(${p.id})">
+                <i class="bi bi-pencil"></i>
+              </button>
+              <button class="btn btn-sm btn-danger" onclick="eliminarProducto(${p.id})">
+                <i class="bi bi-trash"></i>
+              </button>
+            </td>
+          </tr>
+        `;
+      });
+    };
+
+    // Función para guardar producto
+    const guardarProducto = async () => {
+      try {
+        const nombre = document.getElementById('nombre').value;
+        const descripcion = document.getElementById('descripcion').value;
+        const precio = document.getElementById('precio').value;
+        
+        const token = obtenerToken();
+        const response = await fetch(API_URL, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({ nombre, descripcion, precio })
+        });
+
+        if (!response.ok) throw new Error('Error al guardar producto');
+
+        const modal = bootstrap.Modal.getInstance(document.getElementById('productoModal'));
+        modal.hide();
+        
+        document.getElementById('productoForm').reset();
+        await cargarProductos();
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    };
+
+    // Función para editar producto
+    const editarProducto = (id) => {
+      const producto = productos.find(p => p.id === id);
+      if (!producto) return;
+
+      document.getElementById('nombre').value = producto.nombre;
+      document.getElementById('descripcion').value = producto.descripcion;
+      document.getElementById('precio').value = producto.precio;
+
+      const modal = new bootstrap.Modal(document.getElementById('productoModal'));
+      modal.show();
+    };
+
+    // Función para eliminar producto
+    const eliminarProducto = async (id) => {
+      if (!confirm('¿Estás seguro de eliminar este producto?')) return;
+
+      try {
+        const token = obtenerToken();
+        const response = await fetch(`${API_URL}/${id}`, {
+          method: 'DELETE',
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        if (!response.ok) throw new Error('Error al eliminar producto');
+
+        await cargarProductos();
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    };
+
+    // Función para mostrar usuarios
+    const mostrarUsuarios = async () => {
+      try {
+        const token = obtenerToken();
+        const response = await fetch('/api/usuarios', {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        if (!response.ok) throw new Error('Error al cargar usuarios');
+
+        const usuarios = await response.json();
+        console.log('Usuarios:', usuarios);
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    };
+
+    // Función para formatear precio
+    const formatearPrecio = (precio) => {
+      return new Intl.NumberFormat('es-ES', {
+        style: 'currency',
+        currency: 'USD'
+      }).format(precio);
+    };
+
+    // Event Listeners
+    document.addEventListener('DOMContentLoaded', async () => {
+      const token = localStorage.getItem('token');
+      const lastActivity = localStorage.getItem('lastActivity');
+      const SESSION_TIMEOUT = 30 * 60 * 1000; // 30 minutos
+
+      if (token && lastActivity) {
+        const now = new Date().getTime();
+        const timeSinceLastActivity = now - parseInt(lastActivity);
+
+        if (timeSinceLastActivity > SESSION_TIMEOUT) {
+          await cerrarSesion();
+          return;
+        }
+
+        try {
+          const response = await fetch(`${API_AUTH_URL}/verify`, {
+            headers: {
+              'Authorization': `Bearer ${token}`
+            }
+          });
+
+          if (!response.ok) {
+            throw new Error('Token inválido');
+          }
+
+          const usuarioGuardado = localStorage.getItem('usuario');
+          if (usuarioGuardado) {
+            usuarioActual = JSON.parse(usuarioGuardado);
+            // Verificar si es admin
+            if (usuarioActual.rol !== 'admin') {
+              window.location.href = '/';
+              return;
+            }
+            actualizarUIAutenticacion();
+            await cargarProductos();
+          }
+
+          localStorage.setItem('lastActivity', new Date().getTime().toString());
+        } catch (error) {
+          console.error('Error al verificar token:', error);
+          await cerrarSesion();
+        }
+      } else {
+        window.location.href = '/';
+      }
+
+      const btnCerrarSesion = document.getElementById('btnCerrarSesion');
+      if (btnCerrarSesion) {
+        btnCerrarSesion.addEventListener('click', cerrarSesion);
+      }
+    });
+  </script>
+</body>
+</html>

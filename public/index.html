@@ -1,0 +1,1442 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <title>TIENDA ONLINE</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+  <style>
+    :root {
+      --primary-color: #4A90E2;      /* Azul principal */
+      --secondary-color: #50E3C2;    /* Verde-azulado */
+      --accent-color: #F5A623;       /* Naranja */
+      --background-color: #1E1E1E;   /* Negro rico */
+      --card-color: #2D2D2D;         /* Gris oscuro */
+      --text-color: #E0E0E0;         /* Gris claro para texto principal */
+      --text-muted: #A0A0A0;         /* Gris medio para texto secundario */
+      --navbar-color: #2D2D2D;       /* Gris oscuro */
+      --hover-color: #5DA1E9;        /* Azul hover */
+    }
+
+    body {
+      padding-top: 76px;
+      background-color: var(--background-color);
+      color: var(--text-color);
+      font-family: 'Poppins', sans-serif;
+    }
+
+    .navbar {
+      position: fixed;
+      width: 100%;
+      top: 0;
+      z-index: 1030;
+      transition: transform 0.3s ease-in-out;
+      background: var(--navbar-color) !important;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .navbar.navbar-hidden {
+      transform: translateY(-100%);
+    }
+
+    .navbar-dark .navbar-nav .nav-link {
+      color: white !important;
+      font-weight: 500;
+    }
+
+    .card {
+      transition: all 0.3s ease;
+      border: 1px solid rgba(255,255,255,0.1);
+      background-color: var(--card-color);
+      color: var(--text-color);
+      border-radius: 15px;
+      overflow: hidden;
+    }
+
+    .card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    }
+
+    .product-card {
+      height: 100%;
+    }
+
+    .product-image {
+      height: 200px;
+      object-fit: cover;
+      border-radius: 15px 15px 0 0;
+    }
+
+    .price {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: var(--accent-color);
+    }
+
+    .search-box {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .form-control {
+      color: var(--text-color);
+      background-color: var(--background-color);
+    }
+
+    .form-control:focus {
+      color: var(--text-color);
+      background-color: var(--background-color);
+    }
+
+    .category-badge {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      z-index: 10;
+      background-color: var(--primary-color) !important;
+      color: var(--text-color) !important;
+      font-weight: 600;
+      padding: 8px 15px;
+      border-radius: 25px;
+    }
+
+    .hero-section {
+      background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+      color: white;
+      padding: 6rem 0;
+      margin-bottom: 4rem;
+      border-radius: 0 0 50px 50px;
+    }
+
+    .stats-card {
+      background-color: var(--card-color);
+      border-radius: 15px;
+      padding: 2rem;
+      text-align: center;
+      margin-bottom: -50px;
+      position: relative;
+      z-index: 10;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    }
+
+    .stats-icon {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+      color: var(--primary-color);
+    }
+
+    .btn-primary {
+      background-color: var(--primary-color);
+      border-color: var(--primary-color);
+      border-radius: 10px;
+      padding: 10px 20px;
+      font-weight: 500;
+    }
+
+    .btn-primary:hover {
+      background-color: var(--hover-color);
+      border-color: var(--hover-color);
+      transform: translateY(-2px);
+    }
+
+    .btn-light {
+      background-color: var(--card-color);
+      border-color: rgba(255,255,255,0.1);
+      color: var(--text-color);
+    }
+
+    .btn-light:hover {
+      background-color: var(--navbar-color);
+      border-color: rgba(255,255,255,0.2);
+      color: var(--text-color);
+    }
+
+    .modal-content {
+      background-color: var(--card-color);
+      color: var(--text-color);
+      border-radius: 15px;
+    }
+
+    .modal-header {
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .modal-footer {
+      border-top: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .cart-item {
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      padding: 1rem 0;
+    }
+
+    .cart-total {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: var(--primary-color);
+    }
+
+    .btn-favorito {
+      transition: all 0.3s ease;
+      background-color: white;
+      border: 2px solid rgba(0,0,0,0.1);
+      border-radius: 50%;
+      width: 45px;
+      height: 45px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .btn-favorito.activo {
+      color: #FF6B6B;
+      border-color: #FF6B6B;
+    }
+
+    .btn-favorito:hover {
+      transform: scale(1.1);
+      background-color: #fff5f5;
+    }
+
+    .delivery--modes {
+      display: flex;
+      gap: 1rem;
+      padding: 10px;
+      justify-content: center;
+      background-color: transparent;
+    }
+
+    .delivery--modes .enabled {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.85rem;
+      color: var(--text-color);
+      padding: 5px 10px;
+      border-radius: 20px;
+      background-color: #f8f9fa;
+      border: 1px solid rgba(0,0,0,0.1);
+    }
+
+    .delivery--modes .enabled i {
+      font-size: 1rem;
+      color: var(--primary-color);
+    }
+
+    .qty--selector input {
+      background-color: white;
+      border: 2px solid rgba(0,0,0,0.1);
+      border-radius: 8px;
+    }
+
+    .disccount {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: var(--accent-color);
+    }
+
+    .search-box .input-group-text {
+      background-color: var(--card-color);
+      border-color: rgba(255,255,255,0.1);
+      color: var(--text-color);
+    }
+
+    .search-box .form-control {
+      background-color: var(--card-color);
+      border-color: rgba(255,255,255,0.1);
+      color: var(--text-color);
+    }
+
+    .search-box .form-control:focus {
+      background-color: var(--card-color);
+      border-color: var(--primary-color);
+      color: var(--text-color);
+    }
+
+    .dropdown-menu {
+      background-color: var(--card-color);
+      border-color: rgba(255,255,255,0.1);
+    }
+
+    .dropdown-item {
+      color: var(--text-color);
+    }
+
+    .dropdown-item:hover {
+      background-color: rgba(255,255,255,0.05);
+      color: var(--text-color);
+    }
+
+    .dropdown-divider {
+      border-color: rgba(255,255,255,0.1);
+    }
+
+    .text-muted {
+      color: var(--text-muted) !important;
+    }
+
+    .store-popup {
+      background-color: var(--card-color);
+      color: var(--text-color);
+    }
+
+    .card-text {
+      color: var(--text-muted);
+    }
+  </style>
+</head>
+<body class="bg-light">
+  <nav class="navbar navbar-expand-lg navbar-dark">
+    <div class="container">
+      <a class="navbar-brand" href="#">
+        <i class="bi bi-shop me-2"></i>
+        Mi Tienda
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav me-auto">
+          <li class="nav-item">
+            <a class="nav-link active" href="#">
+              <i class="bi bi-grid me-1"></i>
+              Catálogo
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="ubicaciones.html">
+              <i class="bi bi-geo-alt me-1"></i>
+              Ubicaciones
+            </a>
+          </li>
+          <li class="nav-item admin-only d-none">
+            <a class="nav-link" href="admin.html">
+              <i class="bi bi-gear me-1"></i>
+              Gestión
+            </a>
+          </li>
+        </ul>
+        <div class="d-flex align-items-center">
+          <button id="btnLoginNoAuth" class="btn btn-light me-3" data-bs-toggle="modal" data-bs-target="#loginModal">
+            <i class="bi bi-person"></i>
+            Iniciar Sesión
+          </button>
+          <div id="menuUsuarioAuth" class="dropdown me-3 d-none">
+            <button class="btn btn-light dropdown-toggle" type="button" id="btnCuenta" data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="bi bi-person-check"></i>
+              <span id="nombreUsuarioBtn"></span>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end">
+              <li><h6 class="dropdown-header" id="nombreUsuario"></h6></li>
+              <li><hr class="dropdown-divider"></li>
+              <li>
+                <a class="dropdown-item" href="#" id="btnPerfil">
+                  <i class="bi bi-person-circle me-2"></i>
+                  Mi Perfil
+                </a>
+              </li>
+              <li>
+                <a class="dropdown-item" href="#" id="btnFavoritos" data-bs-toggle="modal" data-bs-target="#favoritosModal">
+                  <i class="bi bi-heart me-2"></i>
+                  Mis Favoritos
+                </a>
+              </li>
+              <li>
+                <button class="dropdown-item" type="button" id="btnCerrarSesion">
+                  <i class="bi bi-box-arrow-right me-2"></i>
+                  Cerrar Sesión
+                </button>
+              </li>
+            </ul>
+          </div>
+          <button class="btn btn-light position-relative" data-bs-toggle="modal" data-bs-target="#cartModal">
+            <i class="bi bi-cart3"></i>
+            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="cart-count">
+              0
+            </span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="container text-center">
+      <h1 class="display-4 mb-4">TIENDA ONLINE</h1>
+      <p class="lead mb-5">Descubre nuestra selección de productos de alta calidad</p>
+      
+      <!-- Búsqueda -->
+      <div class="search-box">
+        <div class="input-group">
+          <span class="input-group-text bg-white border-end-0">
+            <i class="bi bi-search"></i>
+          </span>
+          <input type="text" id="busqueda" class="form-control border-start-0" placeholder="Buscar productos...">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="container">
+    <!-- Estadísticas -->
+    <div class="row mb-5">
+      <div class="col-md-4">
+        <div class="stats-card">
+          <i class="bi bi-box-seam stats-icon"></i>
+          <h3 id="total-productos">0</h3>
+          <p class="text-muted mb-0">Productos</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="stats-card">
+          <i class="bi bi-tags stats-icon"></i>
+          <h3>Calidad</h3>
+          <p class="text-muted mb-0">Garantizada</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="stats-card">
+          <i class="bi bi-truck stats-icon"></i>
+          <h3>Envío</h3>
+          <p class="text-muted mb-0">Gratis</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Catálogo de Productos -->
+    <div class="row g-4" id="catalogo-productos">
+      <!-- Las tarjetas de productos se generarán dinámicamente aquí -->
+    </div>
+  </div>
+
+  <!-- Modal del Carrito -->
+  <div class="modal fade" id="cartModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">
+            <i class="bi bi-cart3 me-2"></i>
+            Carrito de Compras
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div id="cartItems">
+            <!-- Los items del carrito se generarán aquí -->
+          </div>
+          <div class="text-end mt-3">
+            <h4 class="cart-total">Total: <span id="cartTotal">$0.00</span></h4>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-danger" onclick="limpiarCarrito()">
+            <i class="bi bi-trash me-2"></i>
+            Limpiar Carrito
+          </button>
+          <button type="button" class="btn btn-success" onclick="comprar()">
+            <i class="bi bi-bag-check me-2"></i>
+            Comprar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de Pago -->
+  <div class="modal fade" id="paymentModal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">
+            <i class="bi bi-credit-card me-2"></i>
+            Información de Pago
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <form id="paymentForm" class="needs-validation" novalidate>
+            <div class="mb-3">
+              <label class="form-label">Método de Pago</label>
+              <div class="d-flex gap-3">
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" name="paymentMethod" id="creditCard" value="credit" checked>
+                  <label class="form-check-label" for="creditCard">
+                    <i class="bi bi-credit-card me-1"></i>
+                    Tarjeta de Crédito
+                  </label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" name="paymentMethod" id="debitCard" value="debit">
+                  <label class="form-check-label" for="debitCard">
+                    <i class="bi bi-credit-card-2-front me-1"></i>
+                    Tarjeta de Débito
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label for="cardName" class="form-label">Nombre en la Tarjeta</label>
+              <input type="text" class="form-control" id="cardName" required>
+              <div class="invalid-feedback">
+                Por favor ingrese el nombre que aparece en la tarjeta
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label for="cardNumber" class="form-label">Número de Tarjeta</label>
+              <div class="input-group">
+                <input type="text" class="form-control" id="cardNumber" required maxlength="19" placeholder="XXXX XXXX XXXX XXXX">
+                <span class="input-group-text">
+                  <i class="bi bi-credit-card"></i>
+                </span>
+                <div class="invalid-feedback">
+                  Por favor ingrese un número de tarjeta válido
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label for="expiryDate" class="form-label">Fecha de Expiración</label>
+                <input type="text" class="form-control" id="expiryDate" required placeholder="MM/YY" maxlength="5">
+                <div class="invalid-feedback">
+                  Por favor ingrese una fecha válida
+                </div>
+              </div>
+              <div class="col-md-6 mb-3">
+                <label for="cvv" class="form-label">CVV</label>
+                <input type="text" class="form-control" id="cvv" required maxlength="4" placeholder="XXX">
+                <div class="invalid-feedback">
+                  Por favor ingrese el código de seguridad
+                </div>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label for="address" class="form-label">Dirección de Envío</label>
+              <textarea class="form-control" id="address" rows="2" required></textarea>
+              <div class="invalid-feedback">
+                Por favor ingrese la dirección de envío
+              </div>
+            </div>
+
+            <div class="alert alert-info">
+              <i class="bi bi-info-circle me-2"></i>
+              Total a Pagar: <strong id="paymentTotal">$0.00</strong>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="button" class="btn btn-primary" onclick="procesarPago()">
+            <i class="bi bi-lock me-2"></i>
+            Pagar Ahora
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de Login -->
+  <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="loginModalLabel">
+            <i class="bi bi-person-circle me-2"></i>
+            Iniciar Sesión
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body">
+          <div id="loginError" class="alert alert-danger d-none"></div>
+          <form id="loginForm" class="needs-validation" novalidate>
+            <div class="mb-3">
+              <label for="loginEmail" class="form-label">Correo Electrónico</label>
+              <input type="email" class="form-control" id="loginEmail" required>
+              <div class="invalid-feedback">
+                Por favor ingrese un correo electrónico válido
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label for="loginPassword" class="form-label">Contraseña</label>
+              <input type="password" class="form-control" id="loginPassword" required>
+              <div class="invalid-feedback">
+                Por favor ingrese su contraseña
+              </div>
+            </div>
+
+            <div class="mb-3 form-check">
+              <input type="checkbox" class="form-check-input" id="rememberMe">
+              <label class="form-check-label" for="rememberMe">Recordarme</label>
+            </div>
+
+            <div class="d-grid gap-2">
+              <button type="submit" class="btn btn-primary">
+                <i class="bi bi-box-arrow-in-right me-2"></i>
+                Iniciar Sesión
+              </button>
+              <button type="button" class="btn btn-outline-primary" onclick="mostrarRegistro()">
+                <i class="bi bi-person-plus me-2"></i>
+                Registrarse
+              </button>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <a href="#" class="text-muted text-decoration-none">¿Olvidaste tu contraseña?</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de Registro -->
+  <div class="modal fade" id="registroModal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">
+            <i class="bi bi-person-plus me-2"></i>
+            Registro de Usuario
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div id="registroError" class="alert alert-danger d-none"></div>
+          <form id="registroForm" class="needs-validation" novalidate>
+            <div class="mb-3">
+              <label for="registroNombre" class="form-label">Nombre Completo</label>
+              <input type="text" class="form-control" id="registroNombre" required>
+              <div class="invalid-feedback">
+                Por favor ingrese su nombre
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label for="registroEmail" class="form-label">Correo Electrónico</label>
+              <input type="email" class="form-control" id="registroEmail" required>
+              <div class="invalid-feedback">
+                Por favor ingrese un correo electrónico válido
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label for="registroPassword" class="form-label">Contraseña</label>
+              <input type="password" class="form-control" id="registroPassword" required minlength="6">
+              <div class="invalid-feedback">
+                La contraseña debe tener al menos 6 caracteres
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label for="registroConfirmPassword" class="form-label">Confirmar Contraseña</label>
+              <input type="password" class="form-control" id="registroConfirmPassword" required>
+              <div class="invalid-feedback">
+                Las contraseñas no coinciden
+              </div>
+            </div>
+
+            <div class="d-grid">
+              <button type="submit" class="btn btn-primary">
+                <i class="bi bi-person-plus me-2"></i>
+                Crear Cuenta
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de Favoritos -->
+  <div class="modal fade" id="favoritosModal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">
+            <i class="bi bi-heart me-2"></i>
+            Mis Favoritos
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div id="favoritosList">
+            <!-- Los items favoritos se generarán aquí -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // Variables globales
+    const API_AUTH_URL = '/api/auth';
+    const API_URL = '/api/productos';
+    let usuarioActual = null;
+    let productos = [];
+    let carrito = [];
+    let favoritos = [];
+    let lastScrollTop = 0;
+    let scrollThreshold = 100;
+
+    // Elementos del DOM
+    const catalogo = document.getElementById('catalogo-productos');
+    const inputBusqueda = document.getElementById('busqueda');
+    const totalProductos = document.getElementById('total-productos');
+    const cartCount = document.getElementById('cart-count');
+    const cartItems = document.getElementById('cartItems');
+    const cartTotal = document.getElementById('cartTotal');
+    const navbar = document.querySelector('.navbar');
+
+    // Función para cargar productos
+    const cargarProductos = async () => {
+      try {
+        const response = await fetch(API_URL);
+        if (!response.ok) {
+          throw new Error('Error al cargar productos');
+        }
+        const data = await response.json();
+        productos = data;
+        totalProductos.textContent = data.length;
+        mostrarProductos(productos);
+      } catch (error) {
+        console.error('Error:', error);
+        catalogo.innerHTML = '<div class="col-12 text-center"><p class="text-danger">Error al cargar los productos</p></div>';
+      }
+    };
+
+    // Función para navegar
+    const navegarA = (url) => {
+      window.location.href = url;
+    };
+
+    // Inicialización
+    document.addEventListener('DOMContentLoaded', async () => {
+      try {
+        // Configurar navegación
+        const enlaces = document.querySelectorAll('a[href]');
+        enlaces.forEach(enlace => {
+          enlace.addEventListener('click', (e) => {
+            const url = enlace.getAttribute('href');
+            if (url !== '#') {
+              e.preventDefault();
+              navegarA(url);
+            }
+          });
+        });
+
+        // Cargar productos
+        await cargarProductos();
+
+        // Verificar autenticación
+        const usuarioGuardado = localStorage.getItem('usuario');
+        if (usuarioGuardado) {
+          try {
+            usuarioActual = JSON.parse(usuarioGuardado);
+            actualizarUIAutenticacion();
+            await cargarFavoritos();
+          } catch (error) {
+            console.error('Error al recuperar usuario:', error);
+            localStorage.removeItem('usuario');
+            localStorage.removeItem('token');
+          }
+        }
+
+        // Configurar búsqueda
+        if (inputBusqueda) {
+          inputBusqueda.addEventListener('input', (e) => {
+            const termino = e.target.value.toLowerCase();
+            const productosFiltrados = productos.filter(p => 
+              p.nombre.toLowerCase().includes(termino) ||
+              p.descripcion.toLowerCase().includes(termino)
+            );
+            mostrarProductos(productosFiltrados);
+          });
+        }
+
+        // Configurar scroll
+        window.addEventListener('scroll', () => {
+          if (!scrollTimeout) {
+            scrollTimeout = setTimeout(() => {
+              const currentScroll = window.pageYOffset || document.documentElement.scrollTop;
+              
+              if (currentScroll > lastScrollTop && currentScroll > scrollThreshold) {
+                navbar.classList.add('navbar-hidden');
+              } else {
+                navbar.classList.remove('navbar-hidden');
+              }
+              
+              lastScrollTop = currentScroll <= 0 ? 0 : currentScroll;
+              scrollTimeout = null;
+            }, 10);
+          }
+        }, { passive: true });
+
+        // Configurar cerrar sesión
+        const btnCerrarSesion = document.getElementById('btnCerrarSesion');
+        if (btnCerrarSesion) {
+          btnCerrarSesion.addEventListener('click', cerrarSesion);
+        }
+
+      } catch (error) {
+        console.error('Error en la inicialización:', error);
+      }
+    });
+
+    // Optimizar el manejo del scroll
+    let scrollTimeout;
+    window.addEventListener('scroll', () => {
+      if (!scrollTimeout) {
+        scrollTimeout = setTimeout(() => {
+          const currentScroll = window.pageYOffset || document.documentElement.scrollTop;
+          
+          if (currentScroll > lastScrollTop && currentScroll > scrollThreshold) {
+            navbar.classList.add('navbar-hidden');
+          } else {
+            navbar.classList.remove('navbar-hidden');
+          }
+          
+          lastScrollTop = currentScroll <= 0 ? 0 : currentScroll;
+          scrollTimeout = null;
+        }, 10);
+      }
+    }, { passive: true });
+
+    // Optimizar la búsqueda con debounce
+    let searchTimeout;
+    inputBusqueda.addEventListener('input', (e) => {
+      clearTimeout(searchTimeout);
+      searchTimeout = setTimeout(() => {
+        const termino = e.target.value.toLowerCase();
+        const productosFiltrados = productos.filter(p => 
+          p.nombre.toLowerCase().includes(termino) ||
+          p.descripcion.toLowerCase().includes(termino)
+        );
+        mostrarProductos(productosFiltrados);
+      }, 300);
+    });
+
+    // Optimizar la función mostrarProductos
+    const mostrarProductos = (productosAMostrar) => {
+      const fragment = document.createDocumentFragment();
+      
+      productosAMostrar.forEach(p => {
+        const esFavorito = favoritos.some(f => f.id === p.id);
+        const div = document.createElement('div');
+        div.className = 'col-md-4 mb-4';
+        div.innerHTML = `
+          <div class="card product-card">
+            <span class="category-badge badge bg-primary">Nuevo</span>
+            <img src="/images/${p.id}.png" class="card-img-top product-image" alt="${p.nombre}" loading="lazy" onerror="this.src='https://via.placeholder.com/300'">
+            <div class="card-body d-flex flex-column">
+              <div class="d-flex justify-content-between align-items-start mb-2">
+                <h5 class="card-title mb-0">${p.nombre}</h5>
+                <div class="code text-muted">Código: ${p.id}</div>
+              </div>
+              <p class="card-text text-muted flex-grow-1">${p.descripcion}</p>
+              <div class="price--cont mb-3">
+                <div class="disccount">${formatearPrecio(p.precio)}</div>
+              </div>
+              <div class="add--to--cart--cont">
+                <div class="qty--selector mb-2">
+                  <div class="d-flex align-items-center">
+                    <button class="btn btn-outline-secondary btn-sm" onclick="cambiarCantidad(${carrito.findIndex(item => item.id === p.id)}, -1)">
+                      <i class="bi bi-dash"></i>
+                    </button>
+                    <input type="text" class="form-control mx-2" value="1" style="width: 60px; text-align: center;">
+                    <button class="btn btn-outline-secondary btn-sm" onclick="cambiarCantidad(${carrito.findIndex(item => item.id === p.id)}, 1)">
+                      <i class="bi bi-plus"></i>
+                    </button>
+                  </div>
+                </div>
+                <div class="d-flex justify-content-between align-items-center">
+                  <button class="btn btn-primary flex-grow-1 me-2" onclick="agregarAlCarrito(${JSON.stringify(p).replace(/"/g, '&quot;')})">
+                    <i class="bi bi-cart-plus me-2"></i>
+                    Agregar al carrito
+                  </button>
+                  <button class="btn btn-light btn-favorito ${esFavorito ? 'activo' : ''}" 
+                          data-producto-id="${p.id}"
+                          onclick="toggleFavorito(${JSON.stringify(p).replace(/"/g, '&quot;')})" 
+                          title="Agregar a favoritos">
+                    <i class="bi bi-heart${esFavorito ? '-fill' : ''}"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+        fragment.appendChild(div);
+      });
+
+      catalogo.innerHTML = '';
+      catalogo.appendChild(fragment);
+    };
+
+    // Función para mostrar el modal de registro
+    const mostrarRegistro = () => {
+      // Ocultar el modal de login
+      const loginModal = bootstrap.Modal.getInstance(document.getElementById('loginModal'));
+      if (loginModal) {
+        loginModal.hide();
+      }
+      
+      // Mostrar el modal de registro
+      const registroModal = new bootstrap.Modal(document.getElementById('registroModal'));
+      registroModal.show();
+    };
+
+    // Manejo del formulario de registro
+    document.getElementById('registroForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      ocultarError('registroError');
+
+      const nombre = document.getElementById('registroNombre').value;
+      const email = document.getElementById('registroEmail').value;
+      const password = document.getElementById('registroPassword').value;
+      const confirmPassword = document.getElementById('registroConfirmPassword').value;
+
+      // Validaciones básicas
+      if (password !== confirmPassword) {
+        mostrarError('registroError', 'Las contraseñas no coinciden');
+        return;
+      }
+
+      if (password.length < 6) {
+        mostrarError('registroError', 'La contraseña debe tener al menos 6 caracteres');
+        return;
+      }
+
+      try {
+        console.log('Intentando registrar usuario...');
+        const response = await fetch(`${API_AUTH_URL}/registro`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ nombre, email, password })
+        });
+
+        const data = await response.json();
+        console.log('Respuesta del servidor:', data);
+
+        if (!response.ok) {
+          throw new Error(data.error || 'Error al registrar usuario');
+        }
+
+        // Guardar datos de sesión
+        guardarToken(data.token);
+        usuarioActual = data.usuario;
+        localStorage.setItem('usuario', JSON.stringify(data.usuario));
+        console.log('Usuario registrado:', usuarioActual);
+
+        // Cerrar modal y limpiar formulario
+        const registroModal = bootstrap.Modal.getInstance(document.getElementById('registroModal'));
+        if (registroModal) {
+          registroModal.hide();
+        }
+        document.getElementById('registroForm').reset();
+
+        // Actualizar UI
+        await actualizarUIAutenticacion();
+        
+        // Cargar favoritos
+        await cargarFavoritos();
+        
+        // Mostrar mensaje de éxito
+        alert('¡Registro exitoso! Bienvenido/a ' + data.usuario.nombre);
+
+      } catch (error) {
+        console.error('Error en registro:', error);
+        mostrarError('registroError', error.message);
+      }
+    });
+
+    // Manejo del formulario de login
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      ocultarError('loginError');
+
+      const email = document.getElementById('loginEmail').value;
+      const password = document.getElementById('loginPassword').value;
+
+      try {
+        console.log('Intentando iniciar sesión...');
+        const response = await fetch(`${API_AUTH_URL}/login`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ email, password })
+        });
+
+        const data = await response.json();
+        console.log('Respuesta del servidor:', data);
+
+        if (!response.ok) {
+          throw new Error(data.error || 'Error al iniciar sesión');
+        }
+
+        // Guardar datos de sesión
+        guardarToken(data.token);
+        usuarioActual = data.usuario;
+        localStorage.setItem('usuario', JSON.stringify(data.usuario));
+        console.log('Usuario logueado:', usuarioActual);
+
+        // Cerrar modal y limpiar formulario
+        const loginModal = bootstrap.Modal.getInstance(document.getElementById('loginModal'));
+        if (loginModal) {
+          loginModal.hide();
+        }
+        document.getElementById('loginForm').reset();
+
+        // Actualizar UI y recargar datos
+        await actualizarUIAutenticacion();
+        
+        // Cargar favoritos inmediatamente después de iniciar sesión
+        await cargarFavoritos();
+        console.log('Favoritos cargados:', favoritos);
+
+        // Actualizar la UI con los favoritos cargados
+        mostrarProductos(productos);
+
+        // Agregar timestamp de última actividad al iniciar sesión
+        localStorage.setItem('lastActivity', new Date().getTime().toString());
+
+      } catch (error) {
+        console.error('Error en inicio de sesión:', error);
+        mostrarError('loginError', error.message);
+      }
+    });
+
+    // Función para actualizar la UI según el estado de autenticación
+    const actualizarUIAutenticacion = () => {
+      try {
+        console.log('Actualizando UI de autenticación...');
+        console.log('Estado actual del usuario:', usuarioActual);
+        
+        const btnLoginNoAuth = document.getElementById('btnLoginNoAuth');
+        const menuUsuarioAuth = document.getElementById('menuUsuarioAuth');
+        const nombreUsuario = document.getElementById('nombreUsuario');
+        const nombreUsuarioBtn = document.getElementById('nombreUsuarioBtn');
+        const elementosAdmin = document.querySelectorAll('.admin-only');
+
+        if (usuarioActual) {
+          // Usuario autenticado
+          btnLoginNoAuth.classList.add('d-none');
+          menuUsuarioAuth.classList.remove('d-none');
+          nombreUsuario.textContent = usuarioActual.nombre;
+          nombreUsuarioBtn.textContent = usuarioActual.nombre;
+
+          // Mostrar/ocultar elementos según el rol
+          if (usuarioActual.rol === 'admin') {
+            console.log('Usuario admin detectado:', usuarioActual);
+            elementosAdmin.forEach(el => el.classList.remove('d-none'));
+          } else {
+            elementosAdmin.forEach(el => el.classList.add('d-none'));
+          }
+        } else {
+          // Usuario no autenticado
+          console.log('No hay usuario autenticado');
+          btnLoginNoAuth.classList.remove('d-none');
+          menuUsuarioAuth.classList.add('d-none');
+          elementosAdmin.forEach(el => el.classList.add('d-none'));
+        }
+        
+        // Actualizar la interfaz de usuario
+        setTimeout(() => {
+          if (typeof cargarProductos === 'function') {
+            cargarProductos();
+          } else {
+            console.error('La función cargarProductos no está definida');
+          }
+        }, 0);
+      } catch (error) {
+        console.error('Error al actualizar UI:', error);
+      }
+    };
+
+    // Funciones de autenticación
+    const mostrarError = (elementId, mensaje) => {
+      const errorDiv = document.getElementById(elementId);
+      errorDiv.textContent = mensaje;
+      errorDiv.classList.remove('d-none');
+    };
+
+    const ocultarError = (elementId) => {
+      const errorDiv = document.getElementById(elementId);
+      errorDiv.classList.add('d-none');
+    };
+
+    const guardarToken = (token) => {
+      localStorage.setItem('token', token);
+    };
+
+    const obtenerToken = () => {
+      return localStorage.getItem('token');
+    };
+
+    // Función para cerrar sesión
+    const cerrarSesion = async () => {
+      try {
+        console.log('Cerrando sesión...');
+        
+        const token = obtenerToken();
+        if (token) {
+          try {
+            // Llamar al endpoint de logout
+            await fetch(`${API_AUTH_URL}/logout`, {
+              method: 'POST',
+              headers: {
+                'Authorization': `Bearer ${token}`
+              }
+            });
+          } catch (error) {
+            console.error('Error al llamar endpoint de logout:', error);
+          }
+        }
+        
+        // Limpiar localStorage
+        localStorage.removeItem('token');
+        localStorage.removeItem('usuario');
+        localStorage.removeItem('carrito');
+        sessionStorage.clear();
+        
+        // Limpiar variables de estado
+        usuarioActual = null;
+        carrito = [];
+        favoritos = [];
+        
+        // Actualizar UI
+        actualizarCarrito();
+        actualizarUIAutenticacion();
+        
+        // Actualizar todos los botones de favoritos a estado no favorito
+        const botonesFavoritos = document.querySelectorAll('.btn-favorito');
+        botonesFavoritos.forEach(btn => {
+          btn.classList.remove('activo');
+          btn.innerHTML = '<i class="bi bi-heart"></i>';
+        });
+        
+        console.log('Sesión cerrada exitosamente');
+        
+        // Recargar la página después de un breve retraso
+        setTimeout(() => {
+          window.location.href = '/';
+        }, 100);
+      } catch (error) {
+        console.error('Error al cerrar sesión:', error);
+      }
+    };
+
+    const agregarAlCarrito = (producto) => {
+      const itemExistente = carrito.find(item => item.id === producto.id);
+      
+      if (itemExistente) {
+        itemExistente.cantidad++;
+      } else {
+        carrito.push({...producto, cantidad: 1});
+      }
+      
+      actualizarCarrito();
+      
+      // Mostrar notificación
+      const toast = new bootstrap.Toast(document.createElement('div'));
+      toast.show();
+    };
+
+    const eliminarDelCarrito = (index) => {
+      carrito.splice(index, 1);
+      actualizarCarrito();
+    };
+
+    const cambiarCantidad = (index, cambio) => {
+      carrito[index].cantidad += cambio;
+      if (carrito[index].cantidad < 1) {
+        eliminarDelCarrito(index);
+      } else {
+        actualizarCarrito();
+      }
+    };
+
+    const limpiarCarrito = () => {
+      carrito = [];
+      actualizarCarrito();
+    };
+
+    const comprar = () => {
+      if (carrito.length === 0) {
+        alert('El carrito está vacío');
+        return;
+      }
+      
+      // Actualizar total en el modal de pago
+      document.getElementById('paymentTotal').textContent = cartTotal.textContent;
+      
+      // Cerrar modal del carrito y abrir modal de pago
+      const cartModal = bootstrap.Modal.getInstance(document.getElementById('cartModal'));
+      cartModal.hide();
+      
+      const paymentModal = new bootstrap.Modal(document.getElementById('paymentModal'));
+      paymentModal.show();
+    };
+
+    const procesarPago = () => {
+      const form = document.getElementById('paymentForm');
+      form.classList.add('was-validated');
+
+      if (!form.checkValidity()) {
+        return;
+      }
+
+      // Simulación de procesamiento de pago
+      const loadingBtn = document.querySelector('#paymentModal .btn-primary');
+      const originalText = loadingBtn.innerHTML;
+      loadingBtn.disabled = true;
+      loadingBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Procesando...';
+
+      setTimeout(() => {
+        alert('¡Pago procesado exitosamente! Gracias por tu compra.');
+        limpiarCarrito();
+        const paymentModal = bootstrap.Modal.getInstance(document.getElementById('paymentModal'));
+        paymentModal.hide();
+        form.classList.remove('was-validated');
+        form.reset();
+        loadingBtn.disabled = false;
+        loadingBtn.innerHTML = originalText;
+      }, 2000);
+    };
+    
+    const actualizarBotonFavorito = (productoId, esFavorito) => {
+      const btn = document.querySelector(`button[data-producto-id="${productoId}"]`);
+      if (btn) {
+        btn.classList.toggle('activo', esFavorito);
+        btn.innerHTML = `<i class="bi bi-heart${esFavorito ? '-fill' : ''}"></i>`;
+      }
+    };
+    
+    const toggleFavorito = async (producto) => {
+      const token = obtenerToken();
+      if (!token || !usuarioActual) {
+        const loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
+        loginModal.show();
+        return;
+      }
+    
+      try {
+        console.log('Producto a procesar:', producto);
+        const esFavorito = favoritos.some(f => f.id === producto.id);
+        console.log('¿Es favorito?:', esFavorito);
+        
+        let url = `/api/favoritos`;
+        if (esFavorito) {
+          url = `${url}/${producto.id}`;
+        } else {
+          url = `${url}/agregar/${producto.id}`;
+        }
+        
+        console.log('URL a llamar:', url);
+        console.log('Método:', esFavorito ? 'DELETE' : 'POST');
+        
+        const response = await fetch(url, {
+          method: esFavorito ? 'DELETE' : 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        console.log('Respuesta del servidor:', response.status);
+
+        if (response.status === 401) {
+          console.log('Sesión expirada o token inválido');
+          // En lugar de cerrar sesión inmediatamente, intentamos renovar el token
+          const renovado = await renovarToken();
+          if (!renovado) {
+            cerrarSesion();
+            return;
+          }
+          // Si se renovó el token, intentamos la operación nuevamente
+          return toggleFavorito(producto);
+        }
+
+        const data = await response.json();
+        
+        if (!response.ok) {
+          throw new Error(data.error || 'Error al actualizar favorito');
+        }
+
+        // Actualizar el estado local de favoritos
+        if (esFavorito) {
+          favoritos = favoritos.filter(f => f.id !== producto.id);
+        } else {
+          favoritos.push(producto);
+        }
+
+        // Actualizar la UI
+        actualizarBotonFavorito(producto.id, !esFavorito);
+        actualizarListaFavoritos();
+
+      } catch (error) {
+        console.error('Error al actualizar favorito:', error);
+        if (error.message.includes('401')) {
+          const renovado = await renovarToken();
+          if (!renovado) {
+            cerrarSesion();
+          }
+        } else {
+          alert('Error al actualizar favoritos: ' + error.message);
+        }
+      }
+    };
+    
+    // Nueva función para actualizar la lista de favoritos
+    const actualizarListaFavoritos = () => {
+      const favoritosList = document.getElementById('favoritosList');
+      if (!favoritosList) return;
+
+      if (favoritos.length === 0) {
+        favoritosList.innerHTML = '<p class="text-center text-muted">No tienes productos favoritos</p>';
+      } else {
+        favoritosList.innerHTML = favoritos.map(p => `
+          <div class="favorito-item">
+            <div class="d-flex align-items-center">
+              <img src="/images/${p.id}.png" class="img-fluid rounded me-3" style="width: 50px; height: 50px; object-fit: cover;" alt="${p.nombre}">
+              <div class="flex-grow-1">
+                <h6 class="mb-0">${p.nombre}</h6>
+                <small class="text-muted">${formatearPrecio(p.precio)}</small>
+              </div>
+              <button class="btn btn-sm btn-danger" onclick="toggleFavorito(${JSON.stringify(p).replace(/"/g, '&quot;')})">
+                <i class="bi bi-trash"></i>
+              </button>
+            </div>
+          </div>
+        `).join('');
+      }
+    };
+    
+    const cargarFavoritos = async () => {
+      if (!usuarioActual) {
+        favoritos = [];
+        return;
+      }
+    
+      try {
+        const token = obtenerToken();
+        if (!token) {
+          console.log('No hay token disponible');
+          return;
+        }
+
+        const response = await fetch('/api/favoritos', {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+    
+        if (response.status === 401) {
+          const renovado = await renovarToken();
+          if (!renovado) {
+            cerrarSesion();
+            return;
+          }
+          return cargarFavoritos();
+        }
+
+        if (!response.ok) throw new Error('Error al cargar favoritos');
+    
+        favoritos = await response.json();
+        console.log('Favoritos cargados del servidor:', favoritos);
+
+        // Actualizar UI
+        actualizarListaFavoritos();
+        actualizarBotonesFavoritos();
+      } catch (error) {
+        console.error('Error:', error);
+        if (error.message.includes('401')) {
+          const renovado = await renovarToken();
+          if (!renovado) {
+            cerrarSesion();
+          }
+        }
+      }
+    };
+
+    const filtrarProductos = (termino) => {
+      const terminoLower = termino.toLowerCase();
+      return productos.filter(p => 
+        p.nombre.toLowerCase().includes(terminoLower) ||
+        p.descripcion.toLowerCase().includes(terminoLower)
+      );
+    };
+
+    const formatearPrecio = (precio) => {
+      return new Intl.NumberFormat('es-ES', {
+        style: 'currency',
+        currency: 'USD'
+      }).format(precio);
+    };
+
+    // Agregar función para renovar token
+    const renovarToken = async () => {
+      try {
+        const token = obtenerToken();
+        if (!token) return false;
+
+        const response = await fetch(`${API_AUTH_URL}/renovar`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        if (!response.ok) return false;
+
+        const data = await response.json();
+        guardarToken(data.token);
+        return true;
+      } catch (error) {
+        console.error('Error al renovar token:', error);
+        return false;
+      }
+    };
+
+    // Nueva función para actualizar todos los botones de favoritos
+    const actualizarBotonesFavoritos = () => {
+      productos.forEach(producto => {
+        const esFavorito = favoritos.some(f => f.id === producto.id);
+        actualizarBotonFavorito(producto.id, esFavorito);
+      });
+    };
+
+    // Actualizar los enlaces de navegación
+    document.addEventListener('DOMContentLoaded', () => {
+      const enlaceUbicaciones = document.querySelector('a[href="ubicaciones.html"]');
+      const enlaceGestion = document.querySelector('a[href="admin.html"]');
+      
+      if (enlaceUbicaciones) {
+        enlaceUbicaciones.addEventListener('click', (e) => {
+          e.preventDefault();
+          navegarA('ubicaciones.html');
+        });
+      }
+      
+      if (enlaceGestion) {
+        enlaceGestion.addEventListener('click', (e) => {
+          e.preventDefault();
+          navegarA('admin.html');
+        });
+      }
+    });
+  </script>
+</body>
+</html>

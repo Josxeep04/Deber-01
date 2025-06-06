@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>TIENDA ONLINE - Ubicaciones</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+     integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+     crossorigin=""/>
+  <style>
+    :root {
+      --primary-color: #4A90E2;      /* Azul principal */
+      --secondary-color: #50E3C2;    /* Verde-azulado */
+      --accent-color: #F5A623;       /* Naranja */
+      --background-color: #1E1E1E;   /* Negro rico */
+      --card-color: #2D2D2D;         /* Gris oscuro */
+      --text-color: #E0E0E0;         /* Gris claro para texto principal */
+      --text-muted: #A0A0A0;         /* Gris medio para texto secundario */
+      --navbar-color: #2D2D2D;       /* Gris oscuro */
+      --hover-color: #5DA1E9;        /* Azul hover */
+    }
+
+    body {
+      padding-top: 76px;
+      background-color: var(--background-color);
+      color: var(--text-color);
+      font-family: 'Poppins', sans-serif;
+    }
+
+    .navbar {
+      position: fixed;
+      width: 100%;
+      top: 0;
+      z-index: 1030;
+      transition: transform 0.3s ease-in-out;
+      background: var(--navbar-color) !important;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    }
+
+    #map {
+      height: 500px;
+      width: 100%;
+      border-radius: 15px;
+      margin: 20px 0;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      z-index: 1;
+    }
+
+    .store-list {
+      background-color: var(--card-color);
+      border-radius: 15px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+      color: var(--text-color);
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .store-item {
+      padding: 15px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border-radius: 8px;
+    }
+
+    .store-item:last-child {
+      border-bottom: none;
+    }
+
+    .store-item:hover {
+      background-color: rgba(255,255,255,0.05);
+      transform: translateX(5px);
+    }
+
+    .store-name {
+      font-weight: bold;
+      color: var(--accent-color);
+      margin-bottom: 5px;
+      font-size: 1.1em;
+    }
+
+    .store-address {
+      font-size: 0.9em;
+      color: var(--text-muted);
+      opacity: 0.8;
+      line-height: 1.4;
+    }
+
+    .hero-section {
+      background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+      color: white;
+      padding: 6rem 0;
+      margin-bottom: 4rem;
+      border-radius: 0 0 50px 50px;
+    }
+
+    .leaflet-popup-content-wrapper {
+      background-color: var(--card-color);
+      color: var(--text-color);
+      border-radius: 15px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+
+    .leaflet-popup-tip {
+      background-color: var(--card-color);
+    }
+
+    .store-popup {
+      color: var(--text-color);
+    }
+
+    .store-popup h5 {
+      color: var(--accent-color);
+      margin-bottom: 8px;
+    }
+
+    .store-popup p {
+      margin-bottom: 10px;
+      color: var(--text-color);
+    }
+
+    .store-popup .btn {
+      width: 100%;
+      background-color: var(--primary-color);
+      border-color: var(--primary-color);
+      color: white;
+      transition: all 0.3s ease;
+    }
+
+    .store-popup .btn:hover {
+      background-color: var(--hover-color);
+      border-color: var(--hover-color);
+      transform: translateY(-2px);
+    }
+
+    .btn-light {
+      background-color: var(--card-color);
+      border-color: rgba(255,255,255,0.1);
+      color: var(--text-color);
+    }
+
+    .btn-light:hover {
+      background-color: var(--navbar-color);
+      border-color: rgba(255,255,255,0.2);
+      color: var(--text-color);
+    }
+
+    .navbar-dark .navbar-nav .nav-link {
+      color: white !important;
+      font-weight: 500;
+    }
+
+    .navbar-dark .navbar-nav .nav-link.active {
+      color: var(--accent-color) !important;
+    }
+
+    .dropdown-menu {
+      background-color: var(--card-color);
+      border-color: rgba(255,255,255,0.1);
+    }
+
+    .dropdown-item {
+      color: var(--text-color);
+    }
+
+    .dropdown-item:hover {
+      background-color: rgba(255,255,255,0.05);
+      color: var(--text-color);
+    }
+
+    .dropdown-divider {
+      border-color: rgba(255,255,255,0.1);
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container">
+      <a class="navbar-brand" href="/">
+        <i class="bi bi-shop me-2"></i>
+        Mi Tienda
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav me-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="/">
+              <i class="bi bi-grid me-1"></i>
+              Catálogo
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link active" href="ubicaciones.html">
+              <i class="bi bi-geo-alt me-1"></i>
+              Ubicaciones
+            </a>
+          </li>
+        </ul>
+        <div class="d-flex align-items-center">
+          <button id="btnLoginNoAuth" class="btn btn-light me-3" data-bs-toggle="modal" data-bs-target="#loginModal">
+            <i class="bi bi-person"></i>
+            Iniciar Sesión
+          </button>
+          <div id="menuUsuarioAuth" class="dropdown me-3 d-none">
+            <button class="btn btn-light dropdown-toggle" type="button" id="btnCuenta" data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="bi bi-person-check"></i>
+              <span id="nombreUsuarioBtn"></span>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end">
+              <li><h6 class="dropdown-header" id="nombreUsuario"></h6></li>
+              <li><hr class="dropdown-divider"></li>
+              <li>
+                <a class="dropdown-item" href="#" id="btnPerfil">
+                  <i class="bi bi-person-circle me-2"></i>
+                  Mi Perfil
+                </a>
+              </li>
+              <li>
+                <button class="dropdown-item" type="button" id="btnCerrarSesion">
+                  <i class="bi bi-box-arrow-right me-2"></i>
+                  Cerrar Sesión
+                </button>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <section class="hero-section">
+    <div class="container text-center">
+      <h1 class="display-4 mb-4">Nuestras Tiendas</h1>
+      <p class="lead">Encuentra la tienda más cercana a ti</p>
+    </div>
+  </section>
+
+  <div class="container">
+    <div class="row">
+      <div class="col-md-4">
+        <div class="store-list">
+          <h3 class="mb-4">
+            <i class="bi bi-shop me-2"></i>
+            Tiendas Disponibles
+          </h3>
+          <div id="storesList">
+            <!-- Las tiendas se generarán aquí -->
+          </div>
+        </div>
+      </div>
+      <div class="col-md-8">
+        <div id="map"></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+     integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+     crossorigin=""></script>
+  <script>
+    // Lista de tiendas
+    const stores = [
+      {
+        name: 'Tienda Quito Centro',
+        address: 'Av. Amazonas y Naciones Unidas, Quito',
+        lat: -0.1807200,
+        lng: -78.4678382
+      },
+      {
+        name: 'Tienda Mall del Sol',
+        address: 'Av. Juan Tanca Marengo, Guayaquil',
+        lat: -2.1481458,
+        lng: -79.8942832
+      },
+      {
+        name: 'Tienda Cuenca',
+        address: 'Av. Remigio Crespo, Cuenca',
+        lat: -2.8987614,
+        lng: -79.0024899
+      },
+      {
+        name: 'Tienda Manta',
+        address: 'Mall del Pacífico, Manta',
+        lat: -0.9432164,
+        lng: -80.7359186
+      },
+      {
+        name: 'Tienda Ambato',
+        address: 'Mall de los Andes, Ambato',
+        lat: -1.2543882,
+        lng: -78.6261694
+      }
+    ];
+
+    let map;
+    let markers = [];
+    let activePopup = null;
+
+    // Inicializar mapa
+    function initMap() {
+      // Centrar el mapa en Ecuador
+      const center = [-1.831239, -78.183406];
+      
+      map = L.map('map').setView(center, 7);
+
+      // Agregar capa de mapa claro
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        maxZoom: 19
+      }).addTo(map);
+
+      // Generar lista de tiendas y marcadores
+      const storesList = document.getElementById('storesList');
+      
+      stores.forEach((store, index) => {
+        // Crear marcador
+        const marker = L.marker([store.lat, store.lng])
+          .addTo(map);
+
+        // Crear popup
+        const popupContent = `
+          <div class="store-popup">
+            <h5>${store.name}</h5>
+            <p>${store.address}</p>
+            <a href="https://www.google.com/maps/dir/?api=1&destination=${store.lat},${store.lng}" 
+               target="_blank" class="btn btn-primary">
+              <i class="bi bi-geo-alt me-2"></i>
+              Cómo llegar
+            </a>
+          </div>
+        `;
+
+        marker.bindPopup(popupContent);
+        markers.push(marker);
+
+        // Agregar a la lista
+        storesList.innerHTML += `
+          <div class="store-item" onclick="centerMap(${index})">
+            <div class="store-name">${store.name}</div>
+            <div class="store-address">
+              <i class="bi bi-geo-alt me-1"></i>
+              ${store.address}
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    function centerMap(index) {
+      const store = stores[index];
+      map.setView([store.lat, store.lng], 15);
+      
+      if (activePopup) {
+        map.closePopup(activePopup);
+      }
+      
+      activePopup = markers[index].openPopup();
+    }
+
+    // Variables globales
+    const API_AUTH_URL = '/api/auth';
+    let usuarioActual = null;
+
+    // Funciones de autenticación
+    const obtenerToken = () => {
+      return localStorage.getItem('token');
+    };
+
+    const actualizarUIAutenticacion = () => {
+      try {
+        const btnLoginNoAuth = document.getElementById('btnLoginNoAuth');
+        const menuUsuarioAuth = document.getElementById('menuUsuarioAuth');
+        const nombreUsuario = document.getElementById('nombreUsuario');
+        const nombreUsuarioBtn = document.getElementById('nombreUsuarioBtn');
+
+        if (usuarioActual) {
+          btnLoginNoAuth.classList.add('d-none');
+          menuUsuarioAuth.classList.remove('d-none');
+          nombreUsuario.textContent = usuarioActual.nombre;
+          nombreUsuarioBtn.textContent = usuarioActual.nombre;
+        } else {
+          btnLoginNoAuth.classList.remove('d-none');
+          menuUsuarioAuth.classList.add('d-none');
+        }
+      } catch (error) {
+        console.error('Error al actualizar UI:', error);
+      }
+    };
+
+    const cerrarSesion = async () => {
+      try {
+        const token = obtenerToken();
+        if (token) {
+          await fetch(`${API_AUTH_URL}/logout`, {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${token}`
+            }
+          });
+        }
+        
+        localStorage.removeItem('token');
+        localStorage.removeItem('usuario');
+        usuarioActual = null;
+        
+        window.location.href = '/';
+      } catch (error) {
+        console.error('Error al cerrar sesión:', error);
+      }
+    };
+
+    // Event Listeners
+    document.addEventListener('DOMContentLoaded', () => {
+      const token = localStorage.getItem('token');
+      const lastActivity = localStorage.getItem('lastActivity');
+      const SESSION_TIMEOUT = 30 * 60 * 1000; // 30 minutos
+
+      if (token && lastActivity) {
+        const now = new Date().getTime();
+        const timeSinceLastActivity = now - parseInt(lastActivity);
+
+        if (timeSinceLastActivity > SESSION_TIMEOUT) {
+          cerrarSesion();
+          return;
+        }
+
+        try {
+          fetch(`${API_AUTH_URL}/verify`, {
+            headers: {
+              'Authorization': `Bearer ${token}`
+            }
+          }).then(response => {
+            if (!response.ok) {
+              throw new Error('Token inválido');
+            }
+            const usuarioGuardado = localStorage.getItem('usuario');
+            if (usuarioGuardado) {
+              usuarioActual = JSON.parse(usuarioGuardado);
+              actualizarUIAutenticacion();
+            }
+            localStorage.setItem('lastActivity', new Date().getTime().toString());
+          }).catch(error => {
+            console.error('Error al verificar token:', error);
+            cerrarSesion();
+          });
+        } catch (error) {
+          console.error('Error:', error);
+          cerrarSesion();
+        }
+      } else {
+        cerrarSesion();
+      }
+
+      // Inicializar mapa
+      initMap();
+    });
+  </script>
+</body>
+</html> 
